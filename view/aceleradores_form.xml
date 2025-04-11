@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree View -->
+    <record id="view_tree_rule_acelerador" model="ir.ui.view">
+        <field name="name">rule.acelerador.tree</field>
+        <field name="model">rule.acelerador</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" string="Aceleradores">
+                <field name="name"/>
+                <field name="limit_inf"/>
+                <field name="limit_sup"/>
+                <field name="acelerador"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="rule_acelerador_action" model="ir.actions.act_window">
+        <field name="name">Aceleradores</field>
+        <field name="res_model">rule.acelerador</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_tree_rule_acelerador"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea y administra tus reglas de aceleradores aquí.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem
+        id="comision_rule_comision_menu"
+        name="Aceleradores"
+        parent="index_comision_menu"
+        action="rule_acelerador_action"
+        sequence="40"/>
+        
+</odoo>

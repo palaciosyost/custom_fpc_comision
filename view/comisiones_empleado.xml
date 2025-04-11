@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_comisiones_move" model="ir.sequence">
+        <field name="name">Secuencia Comisiones</field>
+        <field name="code">comisiones.move</field>
+        <field name="prefix">COM-</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="comisiones_move_view_tree" model="ir.ui.view">
+        <field name="name">comisiones.move.view.tree</field>
+        <field name="model">comisiones.move</field>
+        <field name="arch" type="xml">
+            <tree string="">
+                <field name="name" />
+                <field name="creado_por" />
+                <field name="fecha_create" />
+                <field name="tipo_comision" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="comisiones_move_view_form" model="ir.ui.view">
+        <field name="name">comisiones.move.view.form</field>
+        <field name="model">comisiones.move</field>
+        <field name="arch" type="xml">
+            <form string="Comisión">
+                <header>
+
+                        <button name="action_generate_comision" type="object" string="Obtener datos"/>
+                    </header>
+                <sheet>
+                
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1" style="width: auto;"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="fecha_init"/>
+                            <field name="fecha_create" readonly="1"/>
+                            <field name="creado_por" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="fecha_finish"/>
+                            <field name="users_id" domain="[('is_agente_comision', '=', True)]"/>
+                            <field name="tipo_comision"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="Lineas de comisión" string="Líneas de comisión">
+                            <field name="lineas_comision" readonly="1">
+                                <tree>
+                                    <field name="factura_id"/>
+                                    <field name="fecha_factura"/>
+                                    <field name="moneda"/>
+                                    <field name="total"/>
+                                </tree>
+                            </field>
+                    
+                            <!-- Mostrar total debajo del treeview -->
+                            <div style="text-align: right; margin-top: 10px; margin-right: 20px;">
+                                
+                                <label for="total_objectivo" string="Objetivo (%):" style="font-weight: bold; font-size: 16px;" />
+                                <span style="font-weight: normal; font-size: 16px;">
+                                    <field name="total_objectivo" readonly="1" widget="monetary" options="{'currency_field': 'moneda'}" nolabel="1"/>
+                                </span>
+                                <div class="w-100"></div>
+                                <label for="total" string="Total:" style="font-weight: bold; font-size: 16px;" />
+                                <span style="font-weight: normal; font-size: 16px;">
+                                    <field name="total" readonly="1" widget="monetary" options="{'currency_field': 'moneda'}" nolabel="1"/>
+                                </span>
+                                <div class="w-100"></div>
+                                <label for="tiene_acelerador" string="Tiene Acelerador?:" style="font-weight: bold; font-size: 16px;" />
+                                <span style="font-weight: normal; font-size: 16px;">
+                                    <field name="tiene_acelerador" readonly="1"  nolabel="1"/>
+                                </span>
+                                <div class="w-100"></div>
+                                <label invisible="not tiene_acelerador" for="total_acelerador" string="Total con acelerador:" style="font-weight: bold; font-size: 16px;" />
+                                <span invisible="not tiene_acelerador" style="font-weight: normal; font-size: 16px;">
+                                    <field name="total_acelerador" readonly="1"  nolabel="1"/>
+                                </span>
+                                <div class="w-100"></div>
+                                <label  for="gran_total" string="Gram Total:" style="font-weight: bold; font-size: 16px;" />
+                                <span  style="font-weight: normal; font-size: 16px;">
+                                    <field name="gran_total" readonly="1"  nolabel="1"/>
+                                </span>
+                            </div>
+                        </page>
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_comision_comercial" model="ir.actions.act_window">
+        <field name="name">Comisiones</field>
+        <field name="res_model">comisiones.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('tipo_comision', '=', 'ventas')]</field>
+        <field name="context">{'default_tipo_comision': 'ventas'}</field>
+    </record>
+    <record id="action_comision_servicios" model="ir.actions.act_window">
+        <field name="name">Comisiones</field>
+        <field name="res_model">comisiones.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('tipo_comision', '=', 'servicios')]</field>
+        <field name="context">{'default_tipo_comision': 'servicios'}</field>
+    </record>
+    <menuitem
+        id="menu_comisiones_general"
+        name="Gestor de comisiones"
+        parent="index_comision_menu"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_comisiones_comercial"
+        name="Comisiones comercial"
+        parent="menu_comisiones_general"
+        action="action_comision_comercial"
+        sequence="10"/>
+    <menuitem
+        id="menu_comisiones_servicios"
+        name="Comisiones Servicios"
+        parent="menu_comisiones_general"
+        action="action_comision_servicios"
+        sequence="20"/>
+</odoo>

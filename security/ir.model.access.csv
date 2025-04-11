@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rule_acelerador_admin,rule.acelerador access admin,model_rule_acelerador,custom_fpc_comision.group_administrador_comision,1,1,1,1
+access_comisiones_move_admin,comisiones.move access admin,model_comisiones_move,custom_fpc_comision.group_administrador_comision,1,1,1,1
+access_comision_line_admin,comision.line access admin,model_comision_line,custom_fpc_comision.group_administrador_comision,1,1,1,1

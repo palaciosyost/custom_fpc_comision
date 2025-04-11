@@ -1,0 +1,24 @@
+<!ELEMENT odoo (record+,menuitem+)>
+<!ELEMENT record (field+)>
+<!ATTLIST record id NMTOKEN #REQUIRED>
+<!ATTLIST record model NMTOKEN #REQUIRED>
+<!ELEMENT field (#PCDATA|tree|form)*>
+<!ATTLIST field name NMTOKEN #REQUIRED>
+<!ATTLIST field type NMTOKEN #IMPLIED>
+<!ATTLIST field readonly NMTOKEN #IMPLIED>
+<!ELEMENT tree (field+)>
+<!ATTLIST tree string CDATA #REQUIRED>
+<!ELEMENT form (sheet)>
+<!ATTLIST form string NMTOKEN #REQUIRED>
+<!ELEMENT sheet (group,notebook)>
+<!ELEMENT group (field*,group*)>
+<!ATTLIST group colspan NMTOKEN #IMPLIED>
+<!ELEMENT notebook (page)>
+<!ELEMENT page (group)>
+<!ATTLIST page string CDATA #REQUIRED>
+<!ELEMENT menuitem EMPTY>
+<!ATTLIST menuitem id NMTOKEN #REQUIRED>
+<!ATTLIST menuitem name CDATA #REQUIRED>
+<!ATTLIST menuitem parent NMTOKEN #REQUIRED>
+<!ATTLIST menuitem sequence NMTOKEN #REQUIRED>
+<!ATTLIST menuitem action NMTOKEN #IMPLIED>

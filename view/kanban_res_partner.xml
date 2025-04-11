@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_form_res_partner" model="ir.ui.view">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='vat_vies_container']" position="after">
+                <field name="is_agente_comision" />
+                <field name="tipo_comision" invisible="not is_agente_comision" />
+                <field name="objetivo" invisible="not is_agente_comision" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_tarea_search" model="ir.ui.view">
+        <field name="name">res.partner.search.inherit.agente</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='customer']" position="before">
+                <filter string="Agentes" name="filter_is_agente" domain="[('is_agente_comision','=', True)]" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_partner_comision" model="ir.actions.act_window">
+        <field name="name">Agentes</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_filter_is_agente': 1}</field>
+    </record>
+
+    <menuitem
+        id="index_comision_menu"
+        name="Comisiones"
+        groups="custom_fpc_comision.group_administrador_comision"
+        sequence="1"/>
+
+    <menuitem
+        id="comision_contacto_menu"
+        name="Agentes"
+        parent="index_comision_menu"
+        action="action_partner_comision"
+        sequence="30"/>
+</odoo>
