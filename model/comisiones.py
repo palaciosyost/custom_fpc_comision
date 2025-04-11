@@ -100,7 +100,7 @@ class Comision(models.Model):
                     "factura_id": fac.id,
                     "fecha_factura": fac.invoice_date,
                     "moneda": fac.currency_id.id,
-                    "total": fac.amount_total_signed,
+                    "total": fac.amount_untaxed_signed,
                 }
             )
         print(facturas)
