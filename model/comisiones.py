@@ -145,7 +145,6 @@ class Comision(models.Model):
             )
             if regla:
                 total = self.monto_objetivo
-                acelerador = (total * record.total_objectivo) / 100
-                self.total_acelerador = (acelerador * regla.acelerador) / 100 
-                grantotal = acelerador + acelerador
+                self.total_acelerador = (total * regla.acelerador) / 100 
+                grantotal = self.total_acelerador + self.monto_objetivo
                 self.gran_total = grantotal
