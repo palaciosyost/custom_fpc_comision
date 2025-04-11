@@ -75,7 +75,7 @@ class Comision(models.Model):
             ("date", "<=", fecha_fin),
         ]
         print(domain)
-
+        self.lineas_comision.unlink()
         facturas = self.env["account.move"].search(domain)
         for fac in facturas:
             self.env["comision.line"].create({
