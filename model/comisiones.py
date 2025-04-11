@@ -139,8 +139,9 @@ class Comision(models.Model):
     @api.depends("tiene_acelerador")
     def _set_total_acelerador(self):
         for record in self:
+            monto = record.total_objectivo - 100
             regla = self.env["rule.acelerador"].search(
-                [("limit_inf", ">=", 3)], limit=1
+                [("limit_inf", ">=", monto)], limit=1
             )
             if regla:
                 acelerador = regla.acelerador
