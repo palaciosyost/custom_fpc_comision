@@ -141,12 +141,11 @@ class Comision(models.Model):
         for record in self:
             monto = record.total_objectivo - 100
             regla = self.env["rule.acelerador"].search(
-                [("limit_inf", ">=", monto)], limit=1
+                [("limit_sup", ">=", monto)], limit=1
             )
             if regla:
-                acelerador = regla.acelerador
                 total = self.monto_objetivo
-                acelerador = (total * acelerador) / 100
-                grantotal = total + acelerador
-                self.total_acelerador = acelerador
+                acelerador = (total * record.total_objectivo) / 100
+                self.total_acelerador = (acelerador * regla.acelerador) / 100 
+                grantotal = acelerador + acelerador
                 self.gran_total = grantotal
