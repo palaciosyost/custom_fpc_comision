@@ -6,7 +6,8 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     is_agente_comision = fields.Boolean(string="¿Es agente de comisión?")
-    objetivo = fields.Float(string="Objetivo", required=True)
+    objetivo = fields.Float(string="Objetivo")
+    monto_objetivo = fields.Float(string="Monto por objetivo")
     tipo_comision = fields.Selection(
         [
             ("ventas", "Ventas comercial"),

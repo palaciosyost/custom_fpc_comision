@@ -10,6 +10,7 @@
                 <field name="is_agente_comision" />
                 <field name="tipo_comision" invisible="not is_agente_comision" />
                 <field name="objetivo" invisible="not is_agente_comision" />
+                <field name="monto_objetivo" invisible="not is_agente_comision" />
             </xpath>
         </field>
     </record>

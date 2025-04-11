@@ -12,6 +12,7 @@ class ComisionesRelation(models.Model):
     comision_id = fields.Many2one("comisiones.move", string="Comision")
     moneda = fields.Many2one("res.currency", string="Moneda")
 
+
 class Comision(models.Model):
     _name = "comisiones.move"
 
@@ -19,7 +20,7 @@ class Comision(models.Model):
     fecha_init = fields.Date(string="Fecha de inicio")
     fecha_finish = fields.Date(string="Fecha de corte")
     creado_por = fields.Many2one(
-        "res.users", string="Empleado", default=lambda self: self.env.uid
+        "res.users", string="Creado por", default=lambda self: self.env.uid
     )
     fecha_create = fields.Date(string="Fecha de creación", default=fields.Date.today)
     users_id = fields.Many2one("res.partner", string="Empleado")
@@ -30,10 +31,14 @@ class Comision(models.Model):
         "comision.line", "comision_id", string="Lineas de Comision"
     )
     total = fields.Float(string="Total", compute="_get_total_form")
-    total_objectivo = fields.Float(string="Objetivo (%)", compute="_total_objetivo_form")
+    total_objectivo = fields.Float(
+        string="Objetivo (%)", compute="_total_objetivo_form"
+    )
     tiene_acelerador = fields.Boolean(string="Tiene Acelerador?")
     total_acelerador = fields.Float(string="Total con acelerador")
     gran_total = fields.Float(string="Gran Total")
+    monto_objetivo = fields.Float(string="Monto del objetivo")
+    objetivo = fields.Float(string="Objetivo")
 
     @api.model
     def create(self, vals):
@@ -55,17 +60,28 @@ class Comision(models.Model):
             self.generate_comision_comercial()
 
     def generate_comision_comercial(self):
+        if not self.monto_objetivo:
+            self.monto_objetivo = self.users_id.monto_objetivo
+        if not self.objetivo:
+            self.objetivo = self.users_id.objetivo
         userid = self.env.uid
         fecha_inicio = Date.to_string(self.fecha_init)
         fecha_fin = Date.to_string(self.fecha_finish)
 
-        print('DATOS----------')
+        print("DATOS----------")
         print(self.users_id.tipo_comision)
         print(self.tipo_comision)
         id_contacto = self.users_id.id
         if self.users_id.tipo_comision != self.tipo_comision:
-            raise UserError(_("El usuario no pertenece al tipo de comision de " + self.tipo_comision))
-        agente = self.env['res.users'].search([('partner_id', '=', id_contacto)], limit=1)
+            raise UserError(
+                _(
+                    "El usuario no pertenece al tipo de comision de "
+                    + self.tipo_comision
+                )
+            )
+        agente = self.env["res.users"].search(
+            [("partner_id", "=", id_contacto)], limit=1
+        )
         print("DATOS DE CONSULTA")
         print(agente)
         domain = [
@@ -78,13 +94,15 @@ class Comision(models.Model):
         self.lineas_comision.unlink()
         facturas = self.env["account.move"].search(domain)
         for fac in facturas:
-            self.env["comision.line"].create({
-                'comision_id': self.id,
-                'factura_id': fac.id,
-                'fecha_factura': fac.invoice_date,
-                'moneda': fac.currency_id.id,
-                'total': fac.amount_total_signed,
-            })
+            self.env["comision.line"].create(
+                {
+                    "comision_id": self.id,
+                    "factura_id": fac.id,
+                    "fecha_factura": fac.invoice_date,
+                    "moneda": fac.currency_id.id,
+                    "total": fac.amount_total_signed,
+                }
+            )
         print(facturas)
 
     @api.depends("lineas_comision.total")
@@ -99,14 +117,16 @@ class Comision(models.Model):
             if not record.users_id.objetivo:
                 record.total_objectivo = 0.0
                 record.tiene_acelerador = False
-            
+
             if record.total == 0:
                 record.total_objectivo = 0.0
                 record.tiene_acelerador = False
             else:
-                objetivo = record.users_id.objetivo
+                objetivo = record.objetivo
                 total = record.total
-                porcentaje_objetivo = (total * 100) / objetivo  # total alcanzado sobre objetivo
+                porcentaje_objetivo = (
+                    total * 100
+                ) / objetivo  # total alcanzado sobre objetivo
                 record.total_objectivo = porcentaje_objetivo
 
                 if porcentaje_objetivo > 100:
@@ -115,14 +135,15 @@ class Comision(models.Model):
                 else:
                     record.tiene_acelerador = False
 
-
     @api.depends("tiene_acelerador")
     def _set_total_acelerador(self):
         for record in self:
-            regla = self.env["rule.acelerador"].search([("limit_inf", ">=", 3)], limit=1)
-            if regla :
+            regla = self.env["rule.acelerador"].search(
+                [("limit_inf", ">=", 3)], limit=1
+            )
+            if regla:
                 acelerador = regla.acelerador
-                total = self.total
+                total = self.monto_objetivo
                 acelerador = (total * acelerador) / 100
                 grantotal = total + acelerador
                 self.total_acelerador = acelerador
