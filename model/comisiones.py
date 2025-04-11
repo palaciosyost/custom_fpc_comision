@@ -114,19 +114,20 @@ class Comision(models.Model):
     @api.depends("total", "users_id.objetivo")
     def _total_objetivo_form(self):
         for record in self:
-            if not record.users_id.objetivo:
+            objetivo = record.objetivo or 0.00
+            total = record.total
+
+            # Evitar división por cero
+            if not objetivo or objetivo == 0.0:
                 record.total_objectivo = 0.0
                 record.tiene_acelerador = False
+                continue
 
-            if record.total == 0:
+            if total == 0:
                 record.total_objectivo = 0.0
                 record.tiene_acelerador = False
             else:
-                objetivo = record.objetivo
-                total = record.total
-                porcentaje_objetivo = (
-                    total * 100
-                ) / objetivo  # total alcanzado sobre objetivo
+                porcentaje_objetivo = (total * 100) / objetivo
                 record.total_objectivo = porcentaje_objetivo
 
                 if porcentaje_objetivo > 100:
