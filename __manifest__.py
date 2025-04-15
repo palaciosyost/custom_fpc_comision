@@ -19,6 +19,7 @@
         'data/comision_data.xml',
         'wizard/wizard_comision.xml',
         'view/inherit_from_nomina.xml',
+        'view/reportes/comision_report.xml'
     ],
     'auto_install': False,
     'application': True,
