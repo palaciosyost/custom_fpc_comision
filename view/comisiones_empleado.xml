@@ -87,6 +87,11 @@
                                     <field name="total_acelerador" readonly="1"  nolabel="1"/>
                                 </span>
                                 <div class="w-100"></div>
+                                <label invisible="not tiene_acelerador" for="pre_total" string="Total con acelerador:" style="font-weight: bold; font-size: 16px;" />
+                                <span invisible="not tiene_acelerador" style="font-weight: normal; font-size: 16px;">
+                                    <field name="pre_total" readonly="1"  nolabel="1"/>
+                                </span>
+                                <div class="w-100"></div>
                                 <label  for="gran_total" string="Gram Total:" style="font-weight: bold; font-size: 16px;" />
                                 <span  style="font-weight: normal; font-size: 16px;">
                                     <field name="gran_total" readonly="1"  nolabel="1"/>

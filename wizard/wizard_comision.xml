@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_comision_ventas" model="ir.ui.view">
+        <field name="name">wizard.comision.ventas.view.form</field>
+        <field name="model">wizard.comision.ventas</field>
+        <field name="arch" type="xml">
+            <form string="Comision">
+                <group>
+                    <field name="nomina_id" readonly="1" />
+                    <field name="empleado" readonly="1" />
+                    <field name="contacto_res" invisible="1" />
+                    <field name="comision_jd" domain="[('users_id', '=', contacto_res)]" />
+                </group>
+                <footer>
+                    <button string="Agregar" type="object" name="action_confirm_comision" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="comision_model_action" model="ir.actions.act_window">
+        <field name="name">Wizard Comisiones</field>
+        <field name="res_model">wizard.comision.ventas</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_nomina_id': active_id}</field>
+    </record>
+    
+</odoo>

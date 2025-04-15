@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+    
+        <record id="comision_ventas" model="hr.payslip.input.type">
+            <field name="name">Comision ventas</field>
+            <field name="code">COVE</field>
+        </record>
+    
+    </data>
+    
+
+</odoo>

@@ -30,14 +30,15 @@ class Comision(models.Model):
     lineas_comision = fields.One2many(
         "comision.line", "comision_id", string="Lineas de Comision"
     )
-    total = fields.Float(string="Total", compute="_get_total_form")
+    total = fields.Float(string="Total ventas", compute="_get_total_form")
     total_objectivo = fields.Float(
         string="Objetivo (%)", compute="_total_objetivo_form"
     )
     tiene_acelerador = fields.Boolean(string="Tiene Acelerador?")
-    total_acelerador = fields.Float(string="Total con acelerador")
+    total_acelerador = fields.Float(string="Acelerador")
     gran_total = fields.Float(string="Gran Total")
     monto_objetivo = fields.Float(string="Monto del objetivo")
+    pre_total = fields.Float(string="Pre total")
     objetivo = fields.Float(string="Objetivo")
 
     @api.model
@@ -86,7 +87,8 @@ class Comision(models.Model):
         print(agente)
         domain = [
             ("invoice_user_id", "=", agente.id),
-            # ("state", "=", "posted"),
+            ("state", "=", "posted"),
+            ("payment_state", '=', "paid")
             ("date", ">=", fecha_inicio),
             ("date", "<=", fecha_fin),
         ]
@@ -147,4 +149,5 @@ class Comision(models.Model):
                 peso = self.total_objectivo / 100
                 monto = self.monto_objetivo * peso
                 self.total_acelerador = (monto * regla.acelerador) / 100
+                self.pre_total = (self.total_objectivo / 100) * self.monto_objetivo
                 self.gran_total = monto + self.total_acelerador
