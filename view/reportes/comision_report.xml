@@ -1,16 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Acción del reporte de comisión -->
     <record id="action_reporte_comision" model="ir.actions.report">
       <field name="name">Reporte de Comisión</field>
       <field name="model">comisiones.move</field>
       <field name="report_type">qweb-pdf</field>
-      <field name="report_name">modulo_comisiones.reporte_comision_pdf</field>
+      <field name="report_name">custom_fpc_comision.reporte_comision_pdf</field>
       <field name="print_report_name">'Comisión - %s' % (object.name)</field>
     </record>
   
     <!-- Plantilla QWeb del reporte de comisión -->
     <template id="reporte_comision_pdf">
       <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
         <t t-call="web.external_layout">
           <div class="page">
             <h2 style="text-align: center;">REPORTE DE COMISIÓN</h2>
@@ -95,6 +97,7 @@
           </div>
         </t>
       </t>
+    </t>
     </template>
   </odoo>
   
