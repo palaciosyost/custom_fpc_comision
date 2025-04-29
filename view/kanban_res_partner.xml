@@ -7,10 +7,10 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='vat_vies_container']" position="after">
-                <field name="is_agente_comision" />
-                <field name="tipo_comision" invisible="not is_agente_comision" />
-                <field name="objetivo" invisible="not is_agente_comision" />
-                <field name="monto_objetivo" invisible="not is_agente_comision" />
+                <field name="is_agente_comision" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="tipo_comision" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="objetivo" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision"/>
+                <field name="monto_objetivo" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision"/>
             </xpath>
         </field>
     </record>
