@@ -14,7 +14,8 @@
         <field name="arch" type="xml">
             <tree string="">
                 <field name="name" />
-                <field name="creado_por" />
+                <field name="creado_por" widget="many2one_avatar_user" />
+                <field name="users_id" widget="many2one_avatar_user"/>
                 <field name="fecha_create" />
                 <field name="tipo_comision" />
             </tree>
@@ -43,14 +44,15 @@
                         <group>
                             <field name="fecha_init"/>
                             <field name="fecha_create" readonly="1"/>
-                            <field name="creado_por" readonly="1"/>
-                            <field name="objetivo" readonly="1"/>
+                            <field name="creado_por" readonly="1" widget="many2one_avatar_user"/>
+                            <field name="objetivo" readonly="1" widget="monetary" options="{'currency_field': 'moneda_base'}"/>
+                            <field name="moneda_base" invisible="1"/>
                         </group>
                         <group>
                             <field name="fecha_finish"/>
-                            <field name="users_id" domain="[('is_agente_comision', '=', True)]"/>
+                            <field name="users_id" domain="[('is_agente_comision', '=', True)]" widget="many2one_avatar_user"/>
                             <field name="tipo_comision"/>
-                            <field name="monto_objetivo" readonly="1"/>
+                            <field name="monto_objetivo" readonly="1" widget="monetary" options="{'currency_field': 'moneda_base'}"/>
                         </group>
                     </group>
                     <notebook>
@@ -60,21 +62,22 @@
                                     <field name="factura_id"/>
                                     <field name="fecha_factura"/>
                                     <field name="moneda"/>
-                                    <field name="total" />
+                                    <field name="moneda_base" column_invisible="1"/>
+                                    <field name="tipo_cambio"/>
+                                    <field name="total" widget="monetary" options="{'currency_field': 'moneda_base'}" />
                                 </tree>
                             </field>
-                    
                             <!-- Mostrar total debajo del treeview -->
                             <div style="text-align: right; margin-top: 10px; margin-right: 20px;">
                                 
                                 <label for="total_objectivo" string="Objetivo (%):" style="font-weight: bold; font-size: 16px;" />
                                 <span style="font-weight: normal; font-size: 16px;">
-                                    <field name="total_objectivo" readonly="1" widget="monetary" options="{'currency_field': 'moneda'}" nolabel="1"/>
+                                    <field name="total_objectivo" readonly="1" nolabel="1"/>
                                 </span>
                                 <div class="w-100"></div>
                                 <label for="total" string="Total:" style="font-weight: bold; font-size: 16px;" />
                                 <span style="font-weight: normal; font-size: 16px;">
-                                    <field name="total" readonly="1" widget="monetary" options="{'currency_field': 'moneda'}" nolabel="1"/>
+                                    <field name="total" readonly="1" widget="monetary" options="{'currency_field': 'moneda_base'}" nolabel="1"/>
                                 </span>
                                 <div class="w-100"></div>
                                 <label for="tiene_acelerador" string="Tiene Acelerador?:" style="font-weight: bold; font-size: 16px;" />
@@ -84,17 +87,17 @@
                                 <div class="w-100"></div>
                                 <label invisible="not tiene_acelerador" for="total_acelerador" string="Total con acelerador:" style="font-weight: bold; font-size: 16px;" />
                                 <span invisible="not tiene_acelerador" style="font-weight: normal; font-size: 16px;">
-                                    <field name="total_acelerador" readonly="1"  nolabel="1"/>
+                                    <field name="total_acelerador" widget="monetary" options="{'currency_field': 'moneda_base'}" readonly="1"  nolabel="1"/>
                                 </span>
                                 <div class="w-100"></div>
                                 <label invisible="not tiene_acelerador" for="pre_total" string="Total con acelerador:" style="font-weight: bold; font-size: 16px;" />
                                 <span invisible="not tiene_acelerador" style="font-weight: normal; font-size: 16px;">
-                                    <field name="pre_total" readonly="1"  nolabel="1"/>
+                                    <field name="pre_total" readonly="1" widget="monetary" options="{'currency_field': 'moneda_base'}"  nolabel="1"/>
                                 </span>
                                 <div class="w-100"></div>
-                                <label  for="gran_total" string="Gram Total:" style="font-weight: bold; font-size: 16px;" />
+                                <label  for="gran_total" string="Gran Total:" style="font-weight: bold; font-size: 16px;" />
                                 <span  style="font-weight: normal; font-size: 16px;">
-                                    <field name="gran_total" readonly="1"  nolabel="1"/>
+                                    <field name="gran_total" readonly="1"  nolabel="1" widget="monetary" options="{'currency_field': 'moneda_base'}"/>
                                 </span>
                             </div>
                         </page>

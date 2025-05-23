@@ -32,3 +32,4 @@ class ResPartner(models.Model):
             raise UserError(
                 _("Ya existe otro agente con el tipo de comision 'Servicios'")
             )
+    

@@ -11,8 +11,14 @@ class ComisionesRelation(models.Model):
     total = fields.Float(string="Total vendido")
     comision_id = fields.Many2one("comisiones.move", string="Comision")
     moneda = fields.Many2one("res.currency", string="Moneda")
-
-
+    tipo_cambio = fields.Float(
+        string="T/C",readonly=True,
+    )
+    moneda_base = fields.Many2one(
+        "res.currency",
+        string="Moneda base" ,
+        default=lambda self: self.env.ref('base.PEN'),
+    )
 class Comision(models.Model):
     _name = "comisiones.move"
 
@@ -40,7 +46,11 @@ class Comision(models.Model):
     monto_objetivo = fields.Float(string="Monto del objetivo")
     pre_total = fields.Float(string="Pre total")
     objetivo = fields.Float(string="Objetivo")
-
+    moneda_base = fields.Many2one(
+        "res.currency",
+        string="Moneda",
+        default=lambda self: self.env.ref('base.PEN'),
+    )
     @api.model
     def create(self, vals):
         if vals.get("name", "Nuevo") == "Nuevo":
@@ -50,6 +60,10 @@ class Comision(models.Model):
         return super().create(vals)
 
     def action_generate_comision(self):
+        if not self.fecha_init or not self.fecha_finish:
+            raise UserError(
+                _("La fecha de inicio y fin tiene que estar establecido")
+            )
         if self.fecha_init > self.fecha_finish:
             raise UserError(
                 _("La fecha de incio no puede ser mayor a la fecha de corte")
@@ -87,11 +101,12 @@ class Comision(models.Model):
         print(agente)
         domain = [
             ("invoice_user_id", "=", agente.id),
-            ("state", "=", "posted"),
-            ("payment_state", '=', "paid")
+            # ("state", "=", "posted"),
+            # ("payment_state", "=", "paid"),  
             ("date", ">=", fecha_inicio),
             ("date", "<=", fecha_fin),
         ]
+
         print(domain)
         self.lineas_comision.unlink()
         facturas = self.env["account.move"].search(domain)
@@ -102,6 +117,7 @@ class Comision(models.Model):
                     "factura_id": fac.id,
                     "fecha_factura": fac.invoice_date,
                     "moneda": fac.currency_id.id,
+                    "tipo_cambio": fac.tipo_cambio_dolar_sistema,
                     "total": fac.amount_untaxed_signed,
                 }
             )

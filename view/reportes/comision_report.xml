@@ -2,102 +2,53 @@
 <odoo>
     <!-- Acción del reporte de comisión -->
     <record id="action_reporte_comision" model="ir.actions.report">
-      <field name="name">Reporte de Comisión</field>
-      <field name="model">comisiones.move</field>
-      <field name="report_type">qweb-pdf</field>
-      <field name="report_name">custom_fpc_comision.reporte_comision_pdf</field>
-      <field name="print_report_name">'Comisión - %s' % (object.name)</field>
+        <field name="name">Reporte de Comisión</field>
+        <field name="model">comisiones.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_fpc_comision.reporte_comision_pdf</field>
+        <field name="print_report_name">'Comisión - %s' % (object.name)</field>
     </record>
-  
+
     <!-- Plantilla QWeb del reporte de comisión -->
     <template id="reporte_comision_pdf">
-      <t t-call="web.html_container">
-        <t t-foreach="docs" t-as="doc">
-        <t t-call="web.external_layout">
-          <div class="page">
-            <h2 style="text-align: center;">REPORTE DE COMISIÓN</h2>
-            <table class="table table-sm">
-              <tbody>
-                <tr>
-                  <td><strong>Nombre:</strong> <span t-field="doc.name"/></td>
-                  <td><strong>Empleado:</strong> <span t-field="doc.users_id.name"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Tipo de Comisión:</strong> <span t-field="doc.tipo_comision"/></td>
-                  <td><strong>Creado por:</strong> <span t-field="doc.creado_por.name"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Fecha de Inicio:</strong> <span t-field="doc.fecha_init"/></td>
-                  <td><strong>Fecha de Corte:</strong> <span t-field="doc.fecha_finish"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Fecha de Creación:</strong> <span t-field="doc.fecha_create"/></td>
-                </tr>
-              </tbody>
-            </table>
-  
-            <h4>Ventas Detalladas</h4>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Factura</th>
-                  <th>Fecha</th>
-                  <th>Moneda</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <t t-foreach="doc.lineas_comision" t-as="linea">
-                  <tr>
-                    <td><span t-field="linea.factura_id.name"/></td>
-                    <td><span t-field="linea.fecha_factura"/></td>
-                    <td><span t-field="linea.moneda.name"/></td>
-                    <td><span t-field="linea.total"/></td>
-                  </tr>
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <t t-set="currency_symbol" t-value="doc.moneda_base.symbol or ''" />
+                    <div class="page">
+                      <h2>Reporte de Comisiones - <t t-esc="doc.name"/></h2>
+                      <p><strong>Empleado:</strong> <t t-esc="doc.users_id.name"/></p>
+                      <p><strong>Fecha Inicio:</strong> <t t-esc="doc.fecha_init"/></p>
+                      <p><strong>Fecha Fin:</strong> <t t-esc="doc.fecha_finish"/></p>
+
+                      <table class="table table-sm mt32 mb32" style="width:100%; border-collapse: collapse;" border="1">
+                          <thead>
+                              <tr>
+                                  <th>Factura</th>
+                                  <th>Fecha Factura</th>
+                                  <th>Moneda</th>
+                                  <th>Total Vendido</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <t t-foreach="doc.lineas_comision" t-as="linea">
+                                  <tr>
+                                      <td><t t-esc="linea.factura_id.name"/></td>
+                                      <td><t t-esc="linea.fecha_factura"/></td>
+                                      <td><t t-esc="linea.moneda_base.name"/></td>
+                                      <td><t t-esc="currency_symbol"/> <t t-esc="linea.total"/></td>
+                                  </tr>
+                              </t>
+                          </tbody>
+                      </table>
+
+                      <!--<p><strong>Total Ventas:</strong> <t t-esc="currency_symbol" /> <t t-esc="formatLang(doc.total, digits=2)" /></p>-->
+                      <!--<p><strong>Objetivo (%):</strong> <t t-esc="doc.total_objectivo" />%</p>-->
+                      <!--<p><strong>Tiene Acelerador:</strong> <t t-esc="doc.tiene_acelerador and 'Sí' or 'No'" /></p>-->
+                      <p><strong>Gran Total:</strong> <t t-esc="currency_symbol"/> <t t-esc="doc.gran_total"/></p>
+                  </div>                
                 </t>
-              </tbody>
-            </table>
-  
-            <h4>Resumen de Comisión</h4>
-            <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <td><strong>Total Ventas:</strong></td>
-                  <td><span t-field="doc.total"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Objetivo (%):</strong></td>
-                  <td><span t-field="doc.total_objectivo"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Monto Objetivo:</strong></td>
-                  <td><span t-field="doc.monto_objetivo"/></td>
-                </tr>
-                <tr>
-                  <td><strong>¿Tiene Acelerador?:</strong></td>
-                  <td>
-                    <t t-if="doc.tiene_acelerador">Sí</t>
-                    <t t-else="">No</t>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>Acelerador:</strong></td>
-                  <td><span t-field="doc.total_acelerador"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Pre Total:</strong></td>
-                  <td><span t-field="doc.pre_total"/></td>
-                </tr>
-                <tr>
-                  <td><strong>Gran Total:</strong></td>
-                  <td><span t-field="doc.gran_total"/></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            </t>
         </t>
-      </t>
-    </t>
     </template>
-  </odoo>
-  
+</odoo>
