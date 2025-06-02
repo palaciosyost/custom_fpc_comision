@@ -21,6 +21,7 @@ class ComisionesRelation(models.Model):
     )
 class Comision(models.Model):
     _name = "comisiones.move"
+    _order = "name desc"
 
     name = fields.Char(string="Nombre", readonly=True, copy=False, default="Nuevo")
     fecha_init = fields.Date(string="Fecha de inicio")

@@ -17,6 +17,8 @@
                 <field name="creado_por" widget="many2one_avatar_user" />
                 <field name="users_id" widget="many2one_avatar_user"/>
                 <field name="fecha_create" />
+                <field name="fecha_init" />
+                <field name="fecha_finish" />
                 <field name="tipo_comision" />
             </tree>
         </field>
