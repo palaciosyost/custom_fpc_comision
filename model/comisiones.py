@@ -176,6 +176,8 @@ class Comision(models.Model):
             ("product_id", "!=", False),
             ("move_id.move_type", "=", "out_invoice"),
             ("move_id.state", "=", "posted"),
+            ("move_id.edi_state", "=", "pend"),
+            ("move_id.payment_state", "in", ["paid", "in_payment"]),
         ])
 
         _logger.info("Cantidad de items encontrados: %s", len(items_factura))
