@@ -8,9 +8,13 @@
         <field name="arch" type="xml">
             <xpath expr="//div[@name='vat_vies_container']" position="after">
                 <field name="is_agente_comision" groups="custom_fpc_comision.group_administrador_comision" />
-                <field name="tipo_comision" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision" />
-                <field name="objetivo" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision"/>
-                <field name="monto_objetivo" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision"/>
+                <field name="is_procentaje" invisible="not is_agente_comision" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="p_equipo" invisible="not is_agente_comision and not is_procentaje" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="p_repuestos" invisible="not is_agente_comision and not is_procentaje" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="p_servicios" invisible="not is_agente_comision and not is_procentaje" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="tipo_comision" invisible="not is_agente_comision and is_procentaje" groups="custom_fpc_comision.group_administrador_comision" />
+                <field name="objetivo" invisible="not is_agente_comision and is_procentaje" groups="custom_fpc_comision.group_administrador_comision"/>
+                <field name="monto_objetivo" invisible="not is_agente_comision and is_procentaje" groups="custom_fpc_comision.group_administrador_comision"/>
             </xpath>
         </field>
     </record>
@@ -29,7 +33,7 @@
     <record id="action_partner_comision" model="ir.actions.act_window">
         <field name="name">Agentes</field>
         <field name="res_model">res.partner</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="context">{'search_default_filter_is_agente': 1}</field>
     </record>
 

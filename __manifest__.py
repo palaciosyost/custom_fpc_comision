@@ -8,7 +8,7 @@
     'license': 'LGPL-3',
     'category': 'sale',
     'depends': [
-        'base', "sale", "account"
+        'base', "sale", "account", "hr", "hr_payroll", "pmant"
     ],
     'data': [
         'security/security.xml',

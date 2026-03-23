@@ -6,6 +6,7 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     is_agente_comision = fields.Boolean(string="¿Es agente de comisión?")
+    is_procentaje = fields.Boolean(string="¿Es comision por porcentaje?")
     objetivo = fields.Float(string="Objetivo")
     monto_objetivo = fields.Float(string="Monto por objetivo")
     tipo_comision = fields.Selection(
@@ -15,7 +16,9 @@ class ResPartner(models.Model):
         ],
         string="Tipo de Comisión",
     )
-    
+    p_equipo = fields.Integer(string="% por equipos")
+    p_repuestos = fields.Integer(string="% por repuestos")
+    p_servicios = fields.Integer(string="% por servicios")
 
     def write(self, vals):
         res = super(ResPartner, self).write(vals)

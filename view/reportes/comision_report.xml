@@ -14,7 +14,7 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.external_layout">
-                    <t t-set="currency_symbol" t-value="doc.moneda_base.symbol or ''" />
+                    <t t-set="currency_symbol" t-value="doc.moneda_base.symbol or ''"/>
                     <div class="page">
                       <h2>Reporte de Comisiones - <t t-esc="doc.name"/></h2>
                       <p><strong>Empleado:</strong> <t t-esc="doc.users_id.name"/></p>
@@ -30,23 +30,78 @@
                                   <th>Total Vendido</th>
                               </tr>
                           </thead>
-                          <tbody>
-                              <t t-foreach="doc.lineas_comision" t-as="linea">
-                                  <tr>
-                                      <td><t t-esc="linea.factura_id.name"/></td>
-                                      <td><t t-esc="linea.fecha_factura"/></td>
-                                      <td><t t-esc="linea.moneda_base.name"/></td>
-                                      <td><t t-esc="currency_symbol"/> <t t-esc="linea.total"/></td>
-                                  </tr>
-                              </t>
-                          </tbody>
-                      </table>
+<tbody>
+
+    <!-- ========================= -->
+    <!-- CASO 1: COMISION NORMAL -->
+    <!-- ========================= -->
+    <t t-if="not doc.is_procentaje">
+        <t t-foreach="doc.lineas_comision" t-as="linea">
+            <tr>
+                <td><t t-esc="linea.factura_id.name"/></td>
+                <td><t t-esc="linea.fecha_factura"/></td>
+                <td><t t-esc="linea.moneda_base.name"/></td>
+                <td><t t-esc="currency_symbol"/> <t t-esc="linea.total"/></td>
+            </tr>
+        </t>
+    </t>
+
+    <!-- ========================= -->
+    <!-- CASO 2: PORCENTAJE (AGRUPADO) -->
+    <!-- ========================= -->
+<t t-if="doc.is_procentaje">
+
+    <t t-set="facturas" t-value="{}"/>
+
+    <t t-foreach="doc.lineas_comision_item" t-as="line">
+
+        <!-- 🔥 CLAVE COMO STRING -->
+        <t t-set="factura_id" t-value="str(line.move_id.id)"/>
+
+        <!-- Inicializar -->
+        <t t-if="factura_id not in facturas">
+            <t t-set="facturas" t-value="dict(facturas, **{                 factura_id: {                     'name': line.move_id.name,                     'fecha': line.move_id.invoice_date,                     'total': 0                 }             })"/>
+        </t>
+
+        <!-- Acumular -->
+        <t t-set="facturas" t-value="dict(facturas, **{             factura_id: dict(facturas[factura_id], **{                 'total': facturas[factura_id]['total'] + line.subtotal_base             })         })"/>
+
+    </t>
+
+    <!-- Mostrar -->
+    <t t-foreach="facturas.values()" t-as="fac">
+        <tr>
+            <td><t t-esc="fac['name']"/></td>
+            <td><t t-esc="fac['fecha']"/></td>
+            <td><t t-esc="doc.moneda_base.name"/></td>
+            <td>
+                <t t-esc="currency_symbol"/>
+                <t t-esc="fac['total']"/>
+            </td>
+        </tr>
+    </t>
+
+</t>
+</tbody>                      </table>
 
                       <!--<p><strong>Total Ventas:</strong> <t t-esc="currency_symbol" /> <t t-esc="formatLang(doc.total, digits=2)" /></p>-->
                       <!--<p><strong>Objetivo (%):</strong> <t t-esc="doc.total_objectivo" />%</p>-->
                       <!--<p><strong>Tiene Acelerador:</strong> <t t-esc="doc.tiene_acelerador and 'Sí' or 'No'" /></p>-->
-                      <p><strong>Gran Total:</strong> <t t-esc="currency_symbol"/> <t t-esc="doc.gran_total"/></p>
-                  </div>                
+<t t-if="not doc.is_procentaje">
+    <p><strong>Gran Total:</strong> 
+        <t t-esc="currency_symbol"/> <t t-esc="doc.gran_total"/>
+    </p>
+</t>
+
+<t t-if="doc.is_procentaje">
+    <p><strong>Total Comisión:</strong> 
+        <t t-esc="currency_symbol"/> <t t-esc="doc.total_comision_porcentage"/>
+    </p>
+
+    <p>Equipos: <t t-esc="currency_symbol"/> <t t-esc="doc.total_comision_equipos"/></p>
+    <p>Repuestos: <t t-esc="currency_symbol"/> <t t-esc="doc.total_comision_repuestos"/></p>
+    <p>Servicios: <t t-esc="currency_symbol"/> <t t-esc="doc.total_comision_servicios"/></p>
+</t>                  </div>                
                 </t>
             </t>
         </t>
