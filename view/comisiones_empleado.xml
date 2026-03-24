@@ -30,8 +30,12 @@
         <field name="arch" type="xml">
             <form string="Comisión">
                 <header>
+                        <field name="state" widget="statusbar" options="{'clickable': '1'}" />
 
                         <button name="action_generate_comision" type="object" string="Obtener datos"/>
+                        <button name="action_pagar_comision" class="oe_highlight" type="object" string="Pagar comision"/>
+
+
                     </header>
                 <sheet>
                 

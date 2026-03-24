@@ -3,6 +3,8 @@ from odoo.exceptions import UserError
 from odoo.fields import Date
 
 import logging
+
+from odoo.orm import fields_selection
 _logger = logging.getLogger(__name__)
 class LineaAcoount(models.Model):
     _inherit = "account.move.line"
@@ -12,6 +14,8 @@ class LineaAcoount(models.Model):
         compute="_compute_subtotal_base",
         store=True
     )
+    is_comision_pagada = fields.Boolean(string="Comision pagada")
+
 
     @api.depends('price_subtotal', 'currency_id', 'move_id.currency_id', 'move_id.invoice_date')
     def _compute_subtotal_base(self):
@@ -117,8 +121,26 @@ class Comision(models.Model):
     total_comision_servicios = fields.Float(string="Total por Servicios")
     total_comision_repuestos = fields.Float(string="Total por Repuestos")
     total_comision_equipos = fields.Float(string="Total por Equipos")
+    state = fields.Selection(
+        [
+            ("draft", "Borrador"),
+            ("paid", "Pagado"),
+        ],
+        string="Estado",
+        default="draft",
+        readonly=True
+    )
 
-
+    def action_pagar_comision(self):
+        self.state = "paid"
+        if self.is_procentaje:
+            for line in self.lineas_comision_item:
+                line.move_id.is_comision_pagada = True
+        else: 
+            for line in self.lineas_comision:
+                line.factura_id.is_comision_pagada = True
+                
+                
     @api.onchange("users_id")
     def _onchange_users_id(self):
         if self.users_id:
@@ -176,6 +198,7 @@ class Comision(models.Model):
             ("product_id", "!=", False),
             ("move_id.move_type", "=", "out_invoice"),
             ("move_id.state", "=", "posted"),
+            ("move_id.is_comision_pagada", "!=", True),
             ("move_id.edi_state", "=", "sent"),
             ("move_id.payment_state", "in", ["paid", "in_payment"]),
         ])
@@ -296,6 +319,7 @@ class Comision(models.Model):
             ("invoice_user_id", "=", agente.id),
             ("move_type", "=", "pout_invoiced"),
             ("edi_state", "=", "sent"),
+            ("is_comision_pagada", "!=", True),
             ("payment_state", "in", ["paid", "in_payment"]),
             ("date", ">=", fecha_inicio),
             ("date", "<=", fecha_fin),
