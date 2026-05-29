@@ -203,7 +203,7 @@ class Comision(models.Model):
             ("product_id", "!=", False),
             ("move_id.move_type", "=", "out_invoice"),
             ("move_id.state", "=", "posted"),
-            ("move_id.is_comision_pagada", "!=", True),
+            ("is_comision_pagada", "!=", True),
             ("move_id.edi_state", "=", "sent"),
             ("move_id.payment_state", "in", ["paid", "in_payment"]),
         ])
