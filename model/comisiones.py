@@ -6,6 +6,8 @@ import logging
 
 from odoo.orm import fields_selection
 _logger = logging.getLogger(__name__)
+
+class AccountM
 class LineaAcoount(models.Model):
     _inherit = "account.move.line"
 
@@ -14,8 +16,12 @@ class LineaAcoount(models.Model):
         compute="_compute_subtotal_base",
         store=True
     )
-    is_comision_pagada = fields.Boolean(string="Comision pagada")
-
+    is_comision_pagada = fields.Boolean(
+        string="Comision pagada",
+        default=False,
+        copy=False,
+        index=True,
+    )
 
     @api.depends('price_subtotal', 'currency_id', 'move_id.currency_id', 'move_id.invoice_date')
     def _compute_subtotal_base(self):
@@ -198,7 +204,7 @@ class Comision(models.Model):
             ("product_id", "!=", False),
             ("move_id.move_type", "=", "out_invoice"),
             ("move_id.state", "=", "posted"),
-            ("move_id.is_comision_pagada", "!=", True),
+            ("is_comision_pagada", "!=", True),
             ("move_id.edi_state", "=", "sent"),
             ("move_id.payment_state", "in", ["paid", "in_payment"]),
         ])
